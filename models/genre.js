@@ -10,15 +10,16 @@ function validate(genre) {
     return result;
 }
 
-
-const Genre = mongoose.model('Genre', mongoose.Schema({
+const genreSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
         minlength: 3,
         maxlength: 50
     }
-}));
+})
+const Genre = mongoose.model('Genre', genreSchema);
 
+module.exports.genreSchema = genreSchema;
 module.exports.Genre = Genre;
 module.exports.validate = validate;
