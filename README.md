@@ -1,4 +1,4 @@
-# NodeJS-Vidly
+# Vidly
 This is a project that was done by me in the NodeJS course. The project was intended for learning through the course. 
 
 It uses the following languages/tools:
@@ -8,5 +8,5 @@ It uses the following languages/tools:
   4) Postman
   5) JOI Validation
 
-This project is a movie rental API called Vidly. It consists of movies of different genres, which can be rented by customers.
+This project is a movie rental API called **Vidly**. It consists of movies of different genres, which can be rented by customers through the rental API. Authentication and Authorization to be added.
 The MongoDB is used to store the data processed through the API.
