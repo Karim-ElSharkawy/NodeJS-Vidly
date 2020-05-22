@@ -31,9 +31,9 @@ router.post("/", async (req, res) => {
         dailyRentalRate: req.body.dailyRentalRate
     });
 
-    const result = await newMovie.save();
+    await newMovie.save();
     console.log("Succesfully Created!");
-    res.send(result);
+    res.send(newMovie);
 });
 
 router.put("/:id", async (req, res) => {
