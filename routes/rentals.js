@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { Customer } = require('../models/customer');
 const { Movie } = require('../models/movie');
 const { Rental, validate } = require('../models/rental');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.use(express.json());
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
     console.log("Rental list has been sent!");
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const { error } = validate(req.body);
     if (error) {
         res.status(400).send(error.details[0].message);

@@ -1,17 +1,19 @@
 const express = require('express');
-const {Genre, validate} = require('../models/genre');
+const { Genre, validate } = require('../models/genre');
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const router = express.Router();
 
 
 router.use(express.json());
 
 router.get("/", async (req, res) => {
-    const allGenres = await Genre.find().sort({name: 1});
+    const allGenres = await Genre.find().sort({ name: 1 });
     res.send(allGenres);
     console.log("Genre list has been sent!");
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const { error } = validate(req.body);
     if (error) {
         res.status(400).send(error.details[0].message);
@@ -25,7 +27,7 @@ router.post("/", async (req, res) => {
     res.send(result);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", [auth, admin], async (req, res) => {
     let newGenre = await Genre.findById(req.params.id);
 
     if (!newGenre) {
@@ -43,7 +45,7 @@ router.put("/:id", async (req, res) => {
     res.send(newGenre);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", [auth, admin], async (req, res) => {
 
     const newGenre = await Genre.findByIdAndRemove(req.params.id);
     if (!newGenre) {

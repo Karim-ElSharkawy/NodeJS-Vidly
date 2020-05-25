@@ -1,6 +1,7 @@
 const express = require('express');
 const { Movie, validate } = require('../models/movie');
 const { Genre } = require('../models/genre');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 
@@ -12,7 +13,7 @@ router.get("/", async (req, res) => {
     console.log("Movie list has been sent!");
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const { error } = validate(req.body);
     if (error) {
         res.status(400).send(error.details[0].message);
@@ -36,61 +37,6 @@ router.post("/", async (req, res) => {
     res.send(newMovie);
 });
 
-router.put("/:id", async (req, res) => {
-    let newMovie = await Movie.findById(req.params.id);
-
-    if (!newMovie) {
-        res.status(400).send("Movie with given ID was not found.")
-    }
-    const movieObj = new Movie({
-        title: "1",
-        genreId: "1",
-        numberInStock: 0,
-        dailyRentalRate: 0
-    });
-
-    if (req.body.title) {
-        movieObj.title = req.body.title;
-    }
-    else {
-        movieObj.title = newMovie.title;
-    }
-
-    if (req.body.genreId) {
-        movieObj.genreId = req.body.genreId;
-    }
-    else {
-        movieObj.genreId = String(newMovie.genre._id);
-    }
-
-    if (req.body.numberInStock) {
-        movieObj.numberInStock = req.body.numberInStock;
-    }
-    else {
-        movieObj.numberInStock = newMovie.numberInStock;
-    }
-
-    if (req.body.dailyRentalRate) {
-        movieObj.dailyRentalRate = req.body.dailyRentalRate;
-    }
-    else {
-        movieObj.dailyRentalRate = newMovie.dailyRentalRate;
-    }
-
-
-    movieObj.genre = await Genre.findById(req.body.genreId);
-    movieObj._id = newMovie._id;
-    newMovie = movieObj;
-
-    const { error } = validate(newMovie);
-    if (error) {
-        res.status(400).send(error.details[0].message);
-    }
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    newMovie = await newMovie.save();
-    console.log("Succesfully Updated!");
-    res.send(newMovie);
-});
 
 router.delete("/:id", async (req, res) => {
 
