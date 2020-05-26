@@ -1,6 +1,7 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const winston = require('winston');
+require('winston-mongodb');
 const config = require('config');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -15,15 +16,31 @@ const error = require('./middleware/error');
 require('express-async-errors');
 const app = express();
 
-winston.add(winston.transports.File, { filename: 'logfile.log' });
+winston.configure({ transports: [new winston.transports.File({ filename: 'logfile.log' })] });
+
+winston.exceptions.handle(new winston.transports.File(
+    { filename: 'uncaughtException.log' }
+));
+
+process.on('uncaughtException', (ex) => {
+    console.log('! ~Uncaught Exception~ !');
+    winston.error(ex.message, ex);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (ex) => {
+    console.log('! ~Unhandled Rejection~ !');
+    winston.error(ex.message, ex);
+    process.exit(1);
+});
 
 if (!config.get('jwtPrivateKey')) {
     console.log('FATAL ERROR jwtPrivate Key not defined');
     process.exit(1);
-}
+};
 
 
-mongoose.connect('mongodb://localhost/VidlyDB', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost/VidlyDB', { useUnifiedTopology: true, useCreateIndex: true, useNewUrlParser: true })
     .then(() => console.log("Connected to VidlyDB..."))
     .catch(err => console.log('Failed to Connect to VidlyDB...'));
 
