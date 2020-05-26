@@ -4,7 +4,6 @@ const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const router = express.Router();
 
-
 router.use(express.json());
 
 router.get("/", async (req, res) => {

@@ -1,5 +1,6 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
+const winston = require('winston');
 const config = require('config');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -10,7 +11,11 @@ const movieRouter = require('./routes/movies');
 const rentalRouter = require('./routes/rentals');
 const userRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+const error = require('./middleware/error');
+require('express-async-errors');
 const app = express();
+
+winston.add(winston.transports.File, { filename: 'logfile.log' });
 
 if (!config.get('jwtPrivateKey')) {
     console.log('FATAL ERROR jwtPrivate Key not defined');
@@ -29,6 +34,8 @@ app.use('/api/movies', movieRouter);
 app.use('/api/customers', customerRouter);
 app.use('/api/genres', genreRouter);
 app.use('/', homeRouter);
+
+app.use(error);
 
 const port = process.env.port || 3000;
 app.listen(port, () => console.log(`Ready to connect on port ${port}`));
